@@ -4,7 +4,9 @@ Created on Fri Nov 20 12:09:42 2025
 
 @author: Diuvert
 """
-
+import pandas as pd
+import re
+from sklearn.feature_extraction.text import CountVectorizer
 import data_loader
 import feature_extraction
 import model_trainer
@@ -12,10 +14,15 @@ import model_trainer
 def main():
     # 1. Load Data
     file_path = 'Youtube05-Shakira.csv'
-    df = data_loader.load_data(file_path)
+    df = data_loader.try_read(file_path)
     if df is None:
         return
+    
+    print("\n=== Basic info ===")
+    print("Shape:", df.shape)
+    print("\nColumns:", list(df.columns))
 
+   
     # 2. Feature Extraction
     # Identify columns: CONTENT and CLASS
     # 1 for spam
