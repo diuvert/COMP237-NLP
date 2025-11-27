@@ -1,18 +1,14 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Nov 20 12:09:42 2025
 
-@author: Diuvert
-"""
 import pandas as pd
-import re
-from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 import data_loader
-import feature_extraction
 import model_trainer
 
 def main():
-    # 1. Load Data
+
+
+    # STEP 1 — Load the dataset
+ 
     file_path = 'Youtube05-Shakira.csv'
     df = data_loader.try_read(file_path)
     if df is None:
@@ -22,11 +18,44 @@ def main():
     print("Shape:", df.shape)
     print("\nColumns:", list(df.columns))
 
-    # 2. Feature Extraction
-    # Identify columns: CONTENT and CLASS
-    # 1 for spam
-    print("\nSelected columns: CONTENT, CLASS")
-    X_tfidf = feature_extraction.extract_features(df, content_column='CONTENT')
+
+
+    # STEP 2 — Basic Data Exploration
+    print("\n=== Columns Selected for Processing CONTENT and CLASS ===")
+    print("\n=== Data Exploration ===")
+    print(df[['CONTENT', 'CLASS']].head())
+
+    print("\nClass distribution:")
+    print(df['CLASS'].value_counts())
+
+    print("\nMissing values:")
+    print(df[['CONTENT', 'CLASS']].isnull().sum())
+
+
+    # STEP 3 — CountVectorizer 
+
+    print("\n=== Preparing text using CountVectorizer ===")
+
+    # vectorizer 
+    count_vectorizer = CountVectorizer()
+    X_counts = count_vectorizer.fit_transform(df['CONTENT'])
+
+    print("\n=== CountVectorizer Feature Matrix Shape ===")
+    print(X_counts.shape)
+
+    print("\n=== Example Vocabulary (first 20 words) ===")
+    vocab = list(count_vectorizer.vocabulary_.keys())
+    print(vocab[:20])
+
+
+    print("\n=== Converting Count Matrix to TF-IDF ===")
+
+    tfidf = TfidfTransformer()
+    X_tfidf = tfidf.fit_transform(X_counts)
+
+    print("TF-IDF Shape:", X_tfidf.shape)
+
+    # This TF-IDF matrix will now be used for all further steps.
 
     # 3. Shuffle and Split Data
     # Use pandas.sample to shuffle the dataset, set frac = 1 to get all rows in random order
