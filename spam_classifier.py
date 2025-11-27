@@ -22,7 +22,6 @@ def main():
     print("Shape:", df.shape)
     print("\nColumns:", list(df.columns))
 
-   
     # 2. Feature Extraction
     # Identify columns: CONTENT and CLASS
     # 1 for spam
@@ -30,16 +29,17 @@ def main():
     X_tfidf = feature_extraction.extract_features(df, content_column='CONTENT')
 
     # 3. Shuffle and Split Data
-    # Use pandas.sample to shuffle the dataset, set frac =1 to get random indices
-    print("\n--- Shuffling Dataset ---")
-    shuffled_df = df[['CONTENT', 'CLASS']].sample(frac=1, random_state=42) 
+    # Use pandas.sample to shuffle the dataset, set frac = 1 to get all rows in random order
+    print("\n--- Shuffling Dataset (pandas.sample with frac=1) ---")
+    shuffled_df = df[['CONTENT', 'CLASS']].sample(frac=1, random_state=42)
     shuffled_indices = shuffled_df.index
-    
+    print(f"First 10 shuffled indices: {list(shuffled_indices[:10])}")
+
     # Reorder the features and labels according to the shuffled indices
     X_shuffled = X_tfidf[shuffled_indices]
     y_shuffled = shuffled_df['CLASS']
 
-    # Use pandas split your dataset into 75% for training and 25% for testing
+    # Use pandas to split your dataset into 75% for training and 25% for testing
     print("\n--- Splitting Dataset (75% Train, 25% Test) ---")
     split_index = int(0.75 * len(y_shuffled))
     
@@ -49,8 +49,8 @@ def main():
     X_test = X_shuffled[split_index:]
     y_test = y_shuffled[split_index:]
     
-    print(f"Training set size: {X_train.shape[0]}")
-    print(f"Testing set size: {X_test.shape[0]}")
+    print(f"Training set size: {X_train.shape[0]} samples")
+    print(f"Testing set size: {X_test.shape[0]} samples")
 
     # 4. Train Model
     clf = model_trainer.train_model(X_train, y_train)
