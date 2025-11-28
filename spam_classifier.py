@@ -40,9 +40,9 @@ def main():
     print("\n= CountVectorizer matrix shape =")
     print(X_counts.shape)
 
-    print("\n= Vocabulary of the first 20 words from the vectorizer =")
+    print("\n= Vocabulary of the first 32 words from the vectorizer =")
     vocab = list(count_vectorizer.vocabulary_.keys())
-    print(vocab[:20])
+    print(vocab[:32])
 
 
     print("\n= Converting the count matrix to TF-IDF =")
