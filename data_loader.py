@@ -10,6 +10,6 @@ def try_read(path):
             return df
         except Exception as e:
             print(f"Failed with encoding {enc}: {e}")
-    raise ValueError("Could not read the CSV with tried encodings.")
+    raise ValueError("Could not read the CSV file.")
 
 
