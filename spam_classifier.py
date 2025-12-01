@@ -1,12 +1,13 @@
+
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 import data_loader
 import model_trainer
 
-
 def main():
-    print(">>> main() started - script is running")
+
 
     # STEP 1 — Load the dataset
+ 
     file_path = 'Youtube05-Shakira.csv'
     df = data_loader.try_read(file_path)
     if df is None:
@@ -15,6 +16,8 @@ def main():
     print("\n= Initial Data =")
     print("Shape:", df.shape)
     print("\nColumns:", list(df.columns))
+
+
 
     # STEP 2 — Basic Data Exploration
     print("\n= Basic Data Exploration =")
@@ -26,6 +29,7 @@ def main():
     print("\nMissing values:")
     print(df[['CONTENT', 'CLASS']].isnull().sum())
 
+
     # STEP 3 — CountVectorizer 
     print("\n=== Preparing text using CountVectorizer ===")
 
@@ -36,17 +40,19 @@ def main():
     print("\n= CountVectorizer matrix shape =")
     print(X_counts.shape)
 
-    print("\n= Vocabulary of the first 32 words from the vectorizer =")
+    print("\n= Vocabulary of the first 20 words from the vectorizer =")
     vocab = list(count_vectorizer.vocabulary_.keys())
-    print(vocab[:32])
+    print(vocab[:20])
+
 
     print("\n= Converting the count matrix to TF-IDF =")
+
     tfidf = TfidfTransformer()
     X_tfidf = tfidf.fit_transform(X_counts)
 
     print("TF-IDF data shape:", X_tfidf.shape)
 
-    # This TF-IDF matrix will now be used for all further processing.
+    # This TF-IDF matrix will now be used for all further steps.
 
     # 3. Shuffle and Split Data
     # Use pandas.sample to shuffle the dataset, set frac = 1 to get all rows in random order
@@ -78,41 +84,8 @@ def main():
     # 5. Cross Validation
     model_trainer.perform_cross_validation(clf, X_train, y_train, cv=5)
 
-    # 6. Test Model (Requirement 10)
+    # 6. Test Model
     model_trainer.evaluate_model(clf, X_test, y_test)
-
-    # 7. Classify New Comments (Requirement 11)
-    print("\n Classifying New Comments (Requirement 11) =")
-
-    # 4 non-spam (0), 2 spam (1)
-    new_comments = [
-        # Non-spam examples
-        "This song brings back so many memories, still one of Shakira's best performances!",
-        "I love how her voice changes in the chorus, absolutely beautiful ❤️",
-        "Just found this again after years, such a timeless classic.",
-        "Wow, the choreography in this video is unreal, she is a legend! 😍",
-
-        # Spam examples
-        "Win a FREE iPhone now!!! Click here before it's gone: http://fakeoffer.com",
-        "Subscribe to my channel for guaranteed followers and cash rewards!!! 💰"
-    ]
-
-    # Transform using the same fitted vectorizer and TF-IDF
-    new_counts = count_vectorizer.transform(new_comments)
-    new_tfidf = tfidf.transform(new_counts)
-
-    # Predict with the trained model
-    new_preds = clf.predict(new_tfidf)
-
-        # Nicely print results as a small table
-    print("\nNew comments classification results:\n")
-    print("{:<10} {:<12} {}".format("Comment", "Predicted", "Text"))
-    print("-" * 80)
-    for i, (comment, label) in enumerate(zip(new_comments, new_preds), start=1):
-        label_name = "Non-Spam (0)" if label == 0 else "Spam (1)"
-        print("{:<10} {:<12} {}".format(f"#{i}", label_name, comment))
-
-
 
 if __name__ == "__main__":
     main()
