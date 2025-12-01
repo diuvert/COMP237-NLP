@@ -52,7 +52,7 @@ def main():
 
     print("TF-IDF data shape:", X_tfidf.shape)
 
-    # This TF-IDF matrix will now be used for all further steps.
+    # This TF-IDF matrix will now be used for all further processing.
 
     # 3. Shuffle and Split Data
     # Use pandas.sample to shuffle the dataset, set frac = 1 to get all rows in random order
